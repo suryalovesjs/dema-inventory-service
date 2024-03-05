@@ -1,0 +1,31 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Inventory {
+  productId: String!
+  name: String!
+  quantity: Int!
+  category: String!
+  subCategory: String!
+  orders: [Order!]
+}
+
+type Order {
+  orderId: String!
+  productId: String!
+  currency: String!
+  quantity: Int!
+  shippingCost: Float!
+  amount: Float!
+  channel: String!
+  channelGroup: String!
+  campaign: String!
+  dateTime: String!
+  product: Inventory
+}
+
+type Query {
+  order(skip: Float, take: Float): [Order!]!
+  inventory(searchString: String, page: Float, pageSize: Float): [Inventory!]!
+}

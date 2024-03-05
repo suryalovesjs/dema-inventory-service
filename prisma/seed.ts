@@ -1,60 +1,72 @@
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
+import * as path from 'path';
 
 const prisma = new PrismaClient();
 
-async function seed() {
+// Helper function to parse CSV data
+function parseCSVData(data: string) {
+  return data
+    .split('\n')
+    .slice(1)
+    .map((row) => row.split(','));
+}
+
+async function main() {
+  console.log(`Start seeding ...`);
   try {
-    const ordersCsvData = fs.readFileSync('orders.csv', 'utf-8');
-    const inventoryCsvData = fs.readFileSync('inventory.csv', 'utf-8');
-    const ordersRows = ordersCsvData.split('\n');
-    const inventoryRows = inventoryCsvData.split('\n');
+    const ordersDataFile = path.join(__dirname, 'orders.csv');
+    const inventoriesDataFile = path.join(__dirname, 'inventory.csv');
+    const ordersCsvData = fs.readFileSync(ordersDataFile, 'utf-8');
+    const inventoryCsvData = fs.readFileSync(inventoriesDataFile, 'utf-8');
 
-    for (let i = 1; i < ordersRows.length; i++) {
-      const [
-        orderId,
-        inventoryProductId,
-        currency,
-        inventoryQuantity,
-        shippingCost,
-        amount,
-        channel,
-        channelGroup,
-        campaign,
-        dateTime,
-      ] = ordersRows[i].split(',');
+    const ordersData = parseCSVData(ordersCsvData);
+    const inventoryData = parseCSVData(inventoryCsvData);
 
-      const [productId, name, quantity, category, subCategory] =
-        inventoryRows[i];
-
-      // Create order
-      const order = await prisma.order.create({
-        data: {
-          orderId,
-          productId: inventoryProductId,
-          currency,
-          quantity: inventoryQuantity,
-          shippingCost,
-          amount,
-          channel,
-          channelGroup,
-          campaign,
-          dateTime,
-        },
-      });
-
-      // Create inventory
-      const inventory = await prisma.inventory.create({
+    for (const [
+      productId,
+      name,
+      quantity,
+      category,
+      subCategory,
+    ] of inventoryData) {
+      await prisma.inventory.create({
         data: {
           productId,
           name,
-          quantity,
+          quantity: parseInt(quantity),
           category,
           subCategory,
         },
       });
+    }
 
-      console.log(`Created order: ${order.name}, inventory: ${inventory.name}`);
+    for (const [
+      orderId,
+      inventoryProductId,
+      currency,
+      inventoryQuantity,
+      shippingCost,
+      amount,
+      channel,
+      channelGroup,
+      campaign,
+      dateTime,
+    ] of ordersData) {
+      await prisma.order.create({
+        data: {
+          orderId,
+          productId: inventoryProductId,
+          currency,
+          quantity: parseInt(inventoryQuantity),
+          shippingCost: parseFloat(shippingCost),
+          amount: parseFloat(amount),
+          channel,
+          channelGroup,
+          campaign,
+          dateTime: new Date(dateTime),
+        },
+      });
     }
   } catch (error) {
     console.error(error);
@@ -63,4 +75,12 @@ async function seed() {
   }
 }
 
-seed();
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

@@ -7,23 +7,26 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+model Inventory {
+    productId   String @id
+    name        String
+    quantity    Int
+    category    String
+    subCategory String
+    orders      Order[]
+}
+
 model Order {
-    orderId      Int @id
-    productId    Int
+    id        Int      @id @default(autoincrement())
+    orderId      String
+    product      Inventory? @relation(fields: [productId], references: [productId]) 
+    productId    String 
     currency     String
     quantity     Int
     shippingCost Float
-    amount       String
+    amount       Float
     channel      String
     channelGroup String
     campaign     String
     dateTime     DateTime
-}
-
-model Inventory {
-    productId   Int @id
-    name        String
-    quantity    Int
-    category    String
-    subCategory String 
 }
