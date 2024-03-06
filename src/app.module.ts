@@ -3,8 +3,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { PrismaService } from './prisma.service';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { OrderResolver } from './resolvers/order.resolver';
-import { InventoryResolver } from './resolvers/inventory.resolver';
+import { InventoryModule } from './inventory/inventory.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -13,8 +13,10 @@ import { InventoryResolver } from './resolvers/inventory.resolver';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       buildSchemaOptions: { dateScalarMode: 'timestamp' },
     }),
+    InventoryModule,
+    OrderModule,
   ],
   controllers: [],
-  providers: [PrismaService, OrderResolver, InventoryResolver],
+  providers: [PrismaService],
 })
 export class AppModule {}

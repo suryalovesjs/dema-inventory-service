@@ -1,5 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -7,12 +8,29 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+model Category {
+    id          String @id
+    name        String
+    subCategories   SubCategory[]
+    inventories Inventory[]
+}
+
+model SubCategory {
+    id          String @id
+    name        String
+    categoryId  String
+    category    Category @relation(fields: [categoryId], references: [id])
+    inventories Inventory[]
+}
+
 model Inventory {
     productId   String @id
     name        String
     quantity    Int
-    category    String
-    subCategory String
+    categoryId  String
+    category    Category @relation(fields: [categoryId], references: [id])
+    subCategoryId String 
+    subCategory SubCategory @relation(fields: [subCategoryId], references: [id])
     orders      Order[]
 }
 

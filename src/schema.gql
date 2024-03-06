@@ -2,15 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Inventory {
-  productId: String!
-  name: String!
-  quantity: Int!
-  category: String!
-  subCategory: String!
-  orders: [Order!]
-}
-
 type Order {
   orderId: String!
   productId: String!
@@ -25,7 +16,79 @@ type Order {
   product: Inventory
 }
 
+type SubCategory {
+  id: String!
+  name: String!
+}
+
+type Category {
+  id: String!
+  name: String!
+  subCategories: [SubCategory!]
+}
+
+type Inventory {
+  productId: String!
+  name: String!
+  quantity: Int!
+  category: Category
+  subCategory: SubCategory
+  orders: [Order!]
+  inStock: Boolean!
+  totalOrders: Int!
+}
+
 type Query {
-  order(skip: Float, take: Float): [Order!]!
-  inventory(searchString: String, page: Float, pageSize: Float): [Inventory!]!
+  getInventories(search: SearchInventoryInput, filter: FilterInventoryInput, pagination: InventoryPaginationInput = {page: 1, pageSize: 10}, sort: InventorySortInput): [Inventory!]!
+  getCategories: [Category!]!
+  getOrders(skip: Float, take: Float): [Order!]!
+}
+
+input SearchInventoryInput {
+  name: String
+}
+
+input FilterInventoryInput {
+  category: String
+  subCategory: String
+  inStock: Boolean
+}
+
+input InventoryPaginationInput {
+  page: Float = 1
+  pageSize: Float = 10
+}
+
+input InventorySortInput {
+  sortBy: SortOptions
+  orderBy: SortOrder
+}
+
+enum SortOptions {
+  quantity
+  totalOrders
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+type Mutation {
+  createInventory(newInventory: CreateInventoryInput!): Inventory!
+  updateInventory(updateData: UpdateInventoryInput!, id: String!): Inventory!
+}
+
+input CreateInventoryInput {
+  name: String!
+  quantity: Int!
+  categoryId: String!
+  subCategoryId: String!
+}
+
+input UpdateInventoryInput {
+  name: String
+  quantity: Float
+  categoryId: String
+  subCategoryId: String
 }

@@ -1,5 +1,5 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
-import { Inventory } from './inventory.dto';
+import { Inventory } from './inventory';
 
 @ObjectType()
 export class Order {

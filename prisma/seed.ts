@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
@@ -23,6 +24,32 @@ async function main() {
     const ordersData = parseCSVData(ordersCsvData);
     const inventoryData = parseCSVData(inventoryCsvData);
 
+    const categories = new Map();
+    const subCategories = new Map();
+
+    for (const [, , , category, subCategory] of inventoryData) {
+      if (!categories.has(category)) {
+        const newCategory = await prisma.category.create({
+          data: {
+            id: uuidv4(),
+            name: category,
+          },
+        });
+        categories.set(category, newCategory.id);
+      }
+
+      if (!subCategories.has(subCategory)) {
+        const newSubCategory = await prisma.subCategory.create({
+          data: {
+            id: uuidv4(),
+            name: subCategory,
+            categoryId: categories.get(category),
+          },
+        });
+        subCategories.set(subCategory, newSubCategory.id);
+      }
+    }
+
     for (const [
       productId,
       name,
@@ -35,8 +62,16 @@ async function main() {
           productId,
           name,
           quantity: parseInt(quantity),
-          category,
-          subCategory,
+          category: {
+            connect: {
+              id: categories.get(category),
+            },
+          },
+          subCategory: {
+            connect: {
+              id: subCategories.get(subCategory),
+            },
+          },
         },
       });
     }
