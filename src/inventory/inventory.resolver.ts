@@ -67,6 +67,11 @@ export class InventoryResolver {
     return await this.inventoryService.updateMany(updateDataArray);
   }
 
+  @Mutation(() => Boolean)
+  async deleteInventory(@Args('id', { type: () => String }) id: string) {
+    return await this.inventoryService.deleteOne(id);
+  }
+
   @ResolveField('inStock', () => Boolean)
   getIsInStock(@Parent() inventory: Inventory) {
     return inventory.quantity > 0;

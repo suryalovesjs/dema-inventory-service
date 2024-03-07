@@ -78,6 +78,7 @@ type Mutation {
   createInventory(newInventory: CreateInventoryInput!): Inventory!
   updateInventory(updateData: UpdateInventoryInput!): Inventory!
   bulkUpdateInventory(updateData: [UpdateInventoryInput!]!): [Inventory!]!
+  deleteInventory(id: String!): Boolean!
 }
 
 input CreateInventoryInput {

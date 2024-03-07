@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
-// Helper function to parse CSV data
 function parseCSVData(data: string) {
   return data
     .split('\n')

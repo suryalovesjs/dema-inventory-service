@@ -9,12 +9,10 @@ export class CategoryResolver {
 
   @Query(() => [Category])
   async getCategories() {
-    const categories = await this.prismaService.category.findMany({
+    return await this.prismaService.category.findMany({
       include: {
         subCategories: true,
       },
     });
-
-    return categories;
   }
 }
