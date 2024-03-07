@@ -105,7 +105,18 @@ Returns the total number of orders placed for the particular inventory item.
 
 ### Queries
 
-#### getOrders
-Get all the orders
+#### `getOrders`
+
+Used to fetch a list of orders. It allows the user to utilize pagination via `skip` and `take` arguments.
+
+#### `findOrder`
+
+Allows the retrieval of an order by its `orderId`.
+
+### Mutations
+
+#### `createOrder`
+
+Accepts an `orderInput` to create and save a new order into the database.
 
 

@@ -42,6 +42,7 @@ type Query {
   getInventories(search: SearchInventoryInput, filter: FilterInventoryInput, pagination: InventoryPaginationInput = {page: 1, pageSize: 10}, sort: InventorySortInput): [Inventory!]!
   getCategories: [Category!]!
   getOrders(skip: Float, take: Float): [Order!]!
+  findOrder(orderId: String!): [Order!]!
 }
 
 input SearchInventoryInput {
@@ -79,6 +80,7 @@ type Mutation {
   updateInventory(updateData: UpdateInventoryInput!): Inventory!
   bulkUpdateInventory(updateData: [UpdateInventoryInput!]!): [Inventory!]!
   deleteInventory(id: String!): Boolean!
+  createOrder(orderInput: CreateOrderInput!): Order!
 }
 
 input CreateInventoryInput {
@@ -94,4 +96,16 @@ input UpdateInventoryInput {
   quantity: Float
   categoryId: String
   subCategoryId: String
+}
+
+input CreateOrderInput {
+  productId: String!
+  currency: String!
+  quantity: Int!
+  shippingCost: Float!
+  amount: Float!
+  channel: String!
+  channelGroup: String!
+  campaign: String!
+  dateTime: String!
 }
