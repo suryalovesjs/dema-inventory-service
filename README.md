@@ -1,35 +1,18 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# Dema Inventory Service
+Managing inventories & orders!
 
 ## Installation
 
 ```bash
 $ npm install
+```
+
+## Database Preparation
+
+```bash
+# Seeding
+$ npm run db:migrate
+
 ```
 
 ## Running the app
@@ -42,6 +25,7 @@ $ npm run start
 $ npm run start:dev
 
 # production mode
+$ npm run build
 $ npm run start:prod
 ```
 
@@ -58,20 +42,70 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Technologies Used
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+* [NestJS](https://nestjs.com/): A progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
+* [GraphQL](https://graphql.org/): A query language for APIs, and a runtime for executing those queries with your existing data.
+* [Prisma](https://www.prisma.io/): An open-source database ORM for Node.js and TypeScript.
+* [SQLite](https://www.sqlite.org/index.html): SQLite is a C library that provides a lightweight disk-based database.
 
-## Stay in touch
+## Features
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+* Inventory and Order Management: Add, update, bulkUpdate or delete items in inventory.
+* Search and filter inventories.
+* Sort by quantity or by total orders
+* Search for inventory in stock!
+* Pagination and sort features for inventory queries.
+* Add categories & sub-categories for the inventories.
 
-## License
+## How it Works
 
-Nest is [MIT licensed](LICENSE).
+The program exposes two primary types of operations - `Query` and `Mutation`.
+
+## Inventories
+
+### Queries
+
+#### `getInventories`
+
+Used to retrieve inventory data. It accepts four optional arguments, `search`, `filter`, `pagination` and `sort` to provide more flexibility in fetching inventory data.
+`order` is a related data that can be fetch along with them. 
+
+### Mutations
+
+#### `createInventory`
+
+Accepts a new inventory item and saves it to the database.
+
+#### `updateInventory`
+
+Updates a single inventory record based on the provided data.
+
+#### `bulkUpdateInventory`
+
+Updates multiple inventory records at once.
+
+#### `deleteInventory`
+
+Deletes an inventory record based on provided ID.
+
+## Resolved Fields
+
+The `Inventory` type has two resolved fields `inStock` and `totalOrders`.
+
+### `inStock`
+
+Resolved as `true` if `quantity > 0`, otherwise `false`.
+
+### `totalOrders`
+
+Returns the total number of orders placed for the particular inventory item.
+
+## Orders
+
+### Queries
+
+#### getOrders
+Get all the orders
 
 
-Todo
-1. Enhance schema.prisma, proper data types
