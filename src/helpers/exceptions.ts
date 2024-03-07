@@ -12,3 +12,15 @@ export class InventoryNotFoundException extends HttpException {
     super(`Inventory with id ${productId} not found`, HttpStatus.NOT_FOUND);
   }
 }
+
+/**
+ * Represents an exception that is thrown when the category or subcategory is invalid or there's a mismatch between them.
+ */
+export class CategoryInvalidException extends HttpException {
+  constructor() {
+    super(
+      `Category or Subcategory is invalid or there's a mismatch between them`,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}

@@ -10,56 +10,19 @@ import {
   UpdateInventoryInput,
 } from 'src/dto/inventory';
 import { v4 as uuidv4 } from 'uuid';
-import { InventoryNotFoundException } from '../helpers/exceptions';
+import {
+  CategoryInvalidException,
+  InventoryNotFoundException,
+} from '../helpers/exceptions';
+import { InventoryHelperService } from './inventory-helper.service';
 
 @Injectable()
 /**
  * Service class for managing inventory.
  */
-export class InventoryService {
-  constructor(private prismaService: PrismaService) {}
-
-  /**
-   * Private method to generate updated data object for inventory update.
-   * @param updateData - The input data for inventory update.
-   * @returns The updated data object.
-   */
-  private _dataToUpdate(updateData: UpdateInventoryInput) {
-    const updatedData = {};
-    if (updateData.name) {
-      updatedData['name'] = updateData.name;
-    }
-
-    if (updateData.quantity !== undefined) {
-      updatedData['quantity'] = updateData.quantity;
-    }
-
-    if (updateData.categoryId) {
-      updatedData['category'] = { connect: { id: updateData.categoryId } };
-    }
-
-    if (updateData.subCategoryId) {
-      updatedData['subCategory'] = {
-        connect: { id: updateData.subCategoryId },
-      };
-    }
-
-    return updatedData;
-  }
-
-  /**
-   * Checks if an inventory item exists by its product ID.
-   * @param productId - The product ID to check.
-   * @returns A promise that resolves to a boolean indicating if the inventory item exists.
-   */
-  async existsById(productId: string): Promise<boolean> {
-    const exists = await this.prismaService.inventory.findFirst({
-      where: {
-        productId,
-      },
-    });
-
-    return !!exists;
+export class InventoryService extends InventoryHelperService {
+  constructor(public prismaService: PrismaService) {
+    super(prismaService);
   }
 
   /**
@@ -137,8 +100,17 @@ export class InventoryService {
    * Creates a new inventory item.
    * @param newInventory - The data for the new inventory item.
    * @returns A promise that resolves to the created inventory item.
+   * @throws CategoryInvalidException if the category or subcategory does not exist.
    */
   async createOne(newInventory: CreateInventoryInput) {
+    if (
+      !(await this.categoriesExists(
+        newInventory.categoryId,
+        newInventory.subCategoryId,
+      ))
+    ) {
+      throw new CategoryInvalidException();
+    }
     return await this.prismaService.inventory.create({
       data: {
         productId: uuidv4(),
@@ -163,14 +135,23 @@ export class InventoryService {
    * @param updateData - The data for updating the inventory item.
    * @returns A promise that resolves to the updated inventory item.
    * @throws InventoryNotFoundException if the inventory item does not exist.
+   * @throws CategoryInvalidException if the category or subcategory does not exist.
    */
   async updateOne(updateData: UpdateInventoryInput) {
-    console.log('UpdateData', updateData);
-    if (!(await this.existsById(updateData.productId))) {
+    if (!(await this.productExists(updateData.productId))) {
       throw new InventoryNotFoundException(updateData.productId);
     }
 
-    const updatedData = this._dataToUpdate(updateData);
+    if (
+      !(await this.categoriesExists(
+        updateData.categoryId,
+        updateData.subCategoryId,
+      ))
+    ) {
+      throw new CategoryInvalidException();
+    }
+
+    const updatedData = this.aggregateData(updateData);
 
     return await this.prismaService.inventory.update({
       where: { productId: updateData.productId },
@@ -183,14 +164,24 @@ export class InventoryService {
    * @param updateInputs - The data for updating multiple inventory items.
    * @returns A promise that resolves to an array of updated inventory items.
    * @throws InventoryNotFoundException if any of the inventory items do not exist.
+   * @throws CategoryInvalidException if any of the categories or subcategories do not exist.
    */
   async updateMany(updateInputs: UpdateInventoryInput[]) {
     const updates = updateInputs.map(async (updateData) => {
-      if (!(await this.existsById(updateData.productId))) {
+      if (!(await this.productExists(updateData.productId))) {
         throw new InventoryNotFoundException(updateData.productId);
       }
 
-      const updatedData = this._dataToUpdate(updateData);
+      if (
+        !(await this.categoriesExists(
+          updateData.categoryId,
+          updateData.subCategoryId,
+        ))
+      ) {
+        throw new CategoryInvalidException();
+      }
+
+      const updatedData = this.aggregateData(updateData);
 
       return this.prismaService.inventory.update({
         where: { productId: updateData.productId },
@@ -210,7 +201,7 @@ export class InventoryService {
    * @throws InventoryNotFoundException if the inventory item does not exist.
    */
   async deleteOne(productId: string) {
-    if (!(await this.existsById(productId))) {
+    if (!(await this.productExists(productId))) {
       throw new InventoryNotFoundException(productId);
     }
     return this.prismaService.inventory.delete({ where: { productId } });

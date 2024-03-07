@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { InventoryService } from './inventory.service';
 import { CreateInventoryInput } from '../dto/inventory';
 import { SortOptions, SortOrder } from '../constants';
+import { Category } from 'src/dto/category';
 
 describe('InventoryService', () => {
   let service: InventoryService;
@@ -78,6 +79,21 @@ describe('InventoryService', () => {
       subCategoryId: '7654321',
     };
 
+    const categoryMock: Category = {
+      id: newInventory.categoryId,
+      name: 'random',
+      subCategories: [
+        {
+          id: newInventory.subCategoryId,
+          name: 'something',
+        },
+      ],
+    };
+
+    jest
+      .spyOn(prisma.category, 'findFirst')
+      .mockImplementation(() => Promise.resolve(categoryMock) as any);
+
     jest
       .spyOn(prisma.inventory, 'create')
       .mockImplementation(() => Promise.resolve(newInventory) as any);
@@ -91,7 +107,7 @@ describe('InventoryService', () => {
     const existingProduct = '123456';
 
     jest
-      .spyOn(service, 'existsById')
+      .spyOn(service, 'productExists')
       .mockImplementation(() => Promise.resolve(true));
     jest
       .spyOn(prisma.inventory, 'delete')
