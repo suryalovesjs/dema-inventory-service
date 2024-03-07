@@ -55,9 +55,16 @@ export class InventoryResolver {
   async updateInventory(
     @Args('updateData', { type: () => UpdateInventoryInput })
     updateData: UpdateInventoryInput,
-    @Args('id', { type: () => String }) id: string,
   ) {
-    return await this.inventoryService.updateOne(id, updateData);
+    return await this.inventoryService.updateOne(updateData);
+  }
+
+  @Mutation(() => [Inventory])
+  async bulkUpdateInventory(
+    @Args('updateData', { type: () => [UpdateInventoryInput] })
+    updateDataArray: UpdateInventoryInput[],
+  ) {
+    return await this.inventoryService.updateMany(updateDataArray);
   }
 
   @ResolveField('inStock', () => Boolean)

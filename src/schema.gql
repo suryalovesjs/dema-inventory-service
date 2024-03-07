@@ -76,7 +76,8 @@ enum SortOrder {
 
 type Mutation {
   createInventory(newInventory: CreateInventoryInput!): Inventory!
-  updateInventory(updateData: UpdateInventoryInput!, id: String!): Inventory!
+  updateInventory(updateData: UpdateInventoryInput!): Inventory!
+  bulkUpdateInventory(updateData: [UpdateInventoryInput!]!): [Inventory!]!
 }
 
 input CreateInventoryInput {
@@ -87,6 +88,7 @@ input CreateInventoryInput {
 }
 
 input UpdateInventoryInput {
+  productId: String!
   name: String
   quantity: Float
   categoryId: String

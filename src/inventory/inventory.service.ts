@@ -108,8 +108,8 @@ export class InventoryService {
     });
   }
 
-  async updateOne(id: string, updateData: UpdateInventoryInput) {
-    if (!(await this.existsById(id))) {
+  async updateOne(updateData: UpdateInventoryInput) {
+    if (!(await this.existsById(updateData.productId))) {
       throw new Error('Inventory not found');
     }
 
@@ -134,8 +134,43 @@ export class InventoryService {
     }
 
     return await this.prismaService.inventory.update({
-      where: { productId: id },
+      where: { productId: updateData.productId },
       data: updatedData,
     });
+  }
+
+  async updateMany(updateInputs: UpdateInventoryInput[]) {
+    const updates = updateInputs.map(async (updateData) => {
+      if (!(await this.existsById(updateData.productId))) {
+        throw new Error(`Inventory with id ${updateData.productId} not found`);
+      }
+
+      const data = {};
+
+      if (updateData.name) {
+        data['name'] = updateData.name;
+      }
+
+      if (updateData.quantity !== undefined) {
+        data['quantity'] = updateData.quantity;
+      }
+
+      if (updateData.categoryId) {
+        data['category'] = { connect: { id: updateData.categoryId } };
+      }
+
+      if (updateData.subCategoryId) {
+        data['subCategory'] = { connect: { id: updateData.subCategoryId } };
+      }
+
+      return this.prismaService.inventory.update({
+        where: { productId: updateData.productId },
+        data,
+      });
+    });
+
+    const result = await Promise.all(updates);
+
+    return result;
   }
 }

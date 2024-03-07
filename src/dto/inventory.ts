@@ -56,6 +56,9 @@ export class CreateInventoryInput {
 
 @InputType()
 export class UpdateInventoryInput {
+  @Field(() => String, { nullable: false })
+  productId: string;
+
   @Field({ nullable: true })
   name?: string;
 
