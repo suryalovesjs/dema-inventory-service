@@ -102,17 +102,4 @@ describe('InventoryService', () => {
       newInventory,
     );
   });
-
-  it('deleteOne should delete an inventory item', async () => {
-    const existingProduct = '123456';
-
-    jest
-      .spyOn(service, 'productExists')
-      .mockImplementation(() => Promise.resolve(true));
-    jest
-      .spyOn(prisma.inventory, 'delete')
-      .mockImplementation(() => Promise.resolve({}) as any);
-
-    await expect(service.deleteOne(existingProduct)).resolves.toEqual({});
-  });
 });

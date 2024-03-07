@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SortOptions } from '../constants';
+import { SortOptions, SortOrder } from '../constants';
 import { PrismaService } from '../prisma.service';
 import {
   CreateInventoryInput,
@@ -75,10 +75,10 @@ export class InventoryService extends InventoryHelperService {
       skip: skip,
       orderBy: {
         ...(sort && sort.sortBy === SortOptions.quantity
-          ? { quantity: sort.orderBy }
+          ? { quantity: sort.orderBy || SortOrder.asc }
           : {}),
         ...(sort && sort.sortBy === SortOptions.totalOrders
-          ? { orders: { _count: sort.orderBy } }
+          ? { orders: { _count: sort.orderBy || SortOrder.asc } }
           : {}),
       },
       include: {
@@ -127,6 +127,10 @@ export class InventoryService extends InventoryHelperService {
           },
         },
       },
+      include: {
+        category: true,
+        subCategory: true,
+      },
     });
   }
 
@@ -156,6 +160,10 @@ export class InventoryService extends InventoryHelperService {
     return await this.prismaService.inventory.update({
       where: { productId: updateData.productId },
       data: updatedData,
+      include: {
+        category: true,
+        subCategory: true,
+      },
     });
   }
 
@@ -186,24 +194,15 @@ export class InventoryService extends InventoryHelperService {
       return this.prismaService.inventory.update({
         where: { productId: updateData.productId },
         data: updatedData,
+        include: {
+          category: true,
+          subCategory: true,
+        },
       });
     });
 
     const result = await Promise.all(updates);
 
     return result;
-  }
-
-  /**
-   * Deletes an existing inventory item.
-   * @param productId - The product ID of the inventory item to delete.
-   * @returns A promise that resolves when the inventory item is deleted.
-   * @throws InventoryNotFoundException if the inventory item does not exist.
-   */
-  async deleteOne(productId: string) {
-    if (!(await this.productExists(productId))) {
-      throw new InventoryNotFoundException(productId);
-    }
-    return this.prismaService.inventory.delete({ where: { productId } });
   }
 }

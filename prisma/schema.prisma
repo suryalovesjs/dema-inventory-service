@@ -37,7 +37,7 @@ model Inventory {
 model Order {
     id        Int      @id @default(autoincrement())
     orderId      String
-    product      Inventory? @relation(fields: [productId], references: [productId]) 
+    product      Inventory @relation(fields: [productId], references: [productId]) 
     productId    String 
     currency     String
     quantity     Int

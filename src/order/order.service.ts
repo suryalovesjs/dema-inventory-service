@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateOrderInput, Order } from '../dto/order';
 import { v4 as uuidv4 } from 'uuid';
+import { DataNotFoundException } from '../helpers/exceptions';
 
 @Injectable()
 /**
@@ -35,9 +36,15 @@ export class OrderService {
    * @returns {Promise<Order>} - A promise that resolves to the retrieved order.
    */
   async findOne({ orderId }: { orderId: string }): Promise<Order> {
-    return this.prismaService.order.findFirst({
-      where: { orderId: { equals: orderId } },
+    const order = await this.prismaService.order.findFirst({
+      where: { orderId },
     });
+
+    if (!order) {
+      throw new DataNotFoundException();
+    }
+
+    return order;
   }
 
   /**

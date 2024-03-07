@@ -111,9 +111,11 @@ async function main() {
 
 main()
   .then(async () => {
+    console.info(`Seeding successful!`);
     await prisma.$disconnect();
   })
   .catch(async (e) => {
+    console.error(`Seeding unsuccessful!`);
     console.error(e);
     await prisma.$disconnect();
     process.exit(1);

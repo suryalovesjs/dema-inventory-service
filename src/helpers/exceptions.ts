@@ -24,3 +24,9 @@ export class CategoryInvalidException extends HttpException {
     );
   }
 }
+
+export class DataNotFoundException extends HttpException {
+  constructor() {
+    super('Data you requested is not found', HttpStatus.NOT_FOUND);
+  }
+}

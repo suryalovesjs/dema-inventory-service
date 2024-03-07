@@ -1,6 +1,9 @@
 # Dema Inventory Service
 Managing inventories & orders!
 
+## Examples
+Find example queries in `EXAMPLES.md`
+
 ## Installation
 
 ```bash
@@ -51,7 +54,7 @@ $ npm run test:cov
 
 ## Features
 
-* Inventory and Order Management: Add, update, bulkUpdate or delete items in inventory.
+* Inventory and Order Management: Add, update, bulkUpdate items in inventory.
 * Search and filter inventories.
 * Sort by quantity or by total orders
 * Search for inventory in stock!
@@ -85,9 +88,6 @@ Updates a single inventory record based on the provided data.
 
 Updates multiple inventory records at once.
 
-#### `deleteInventory`
-
-Deletes an inventory record based on provided ID.
 
 ## Resolved Fields
 
@@ -118,5 +118,16 @@ Allows the retrieval of an order by its `orderId`.
 #### `createOrder`
 
 Accepts an `orderInput` to create and save a new order into the database.
+
+# Things that can be covered with more time
+
+* Improved error handling
+* Improved data validation
+* Accounting the quantity under each orders and to determine the stock availability
+* Options to fulfill orders
+* Create new order type to categorise purchase orders vs return orders and adjust inventory accordingly
+* E2E / Integration tests will synthetic data in a docker container
+* Increased test coverage
+* Remove product from Inventory and flag the associated orders as invalidated orders
 
 

@@ -13,7 +13,6 @@ type Order {
   channelGroup: String!
   campaign: String!
   dateTime: String!
-  product: Inventory
 }
 
 type SubCategory {
@@ -24,7 +23,7 @@ type SubCategory {
 type Category {
   id: String!
   name: String!
-  subCategories: [SubCategory!]
+  subCategories: [SubCategory!]!
 }
 
 type Inventory {
@@ -42,7 +41,7 @@ type Query {
   getInventories(search: SearchInventoryInput, filter: FilterInventoryInput, pagination: InventoryPaginationInput = {page: 1, pageSize: 10}, sort: InventorySortInput): [Inventory!]!
   getCategories: [Category!]!
   getOrders(skip: Float, take: Float): [Order!]!
-  findOrder(orderId: String!): [Order!]!
+  findOrder(orderId: String!): Order!
 }
 
 input SearchInventoryInput {
@@ -79,7 +78,6 @@ type Mutation {
   createInventory(newInventory: CreateInventoryInput!): Inventory!
   updateInventory(updateData: UpdateInventoryInput!): Inventory!
   bulkUpdateInventory(updateData: [UpdateInventoryInput!]!): [Inventory!]!
-  deleteInventory(id: String!): Boolean!
   createOrder(orderInput: CreateOrderInput!): Order!
 }
 

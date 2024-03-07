@@ -94,16 +94,6 @@ export class InventoryResolver {
   }
 
   /**
-   * Deletes an inventory by its ID.
-   * @param id - The ID of the inventory to delete.
-   * @returns A boolean indicating whether the inventory was successfully deleted.
-   */
-  @Mutation(() => Boolean)
-  async deleteInventory(@Args('id', { type: () => String }) id: string) {
-    return await this.inventoryService.deleteOne(id);
-  }
-
-  /**
    * Resolver field for determining if an inventory is in stock.
    * @param inventory - The inventory object.
    * @returns A boolean indicating if the inventory is in stock.

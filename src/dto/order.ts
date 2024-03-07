@@ -1,5 +1,4 @@
 import { Field, Float, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { Inventory } from './inventory';
 
 @ObjectType()
 export class Order {
@@ -32,9 +31,6 @@ export class Order {
 
   @Field(() => String)
   dateTime: Date;
-
-  @Field(() => Inventory, { nullable: true })
-  product?: Inventory | null;
 }
 
 @InputType()

@@ -9,6 +9,6 @@ export class Category {
   @Field(() => String)
   name: string;
 
-  @Field(() => [SubCategory], { nullable: true })
-  subCategories: [SubCategory] | null;
+  @Field(() => [SubCategory])
+  subCategories: [SubCategory];
 }

@@ -29,7 +29,7 @@ export class OrderResolver {
    * @param orderId - The orderId of the order to find.
    * @returns The found order.
    */
-  @Query(() => [Order])
+  @Query(() => Order)
   async findOrder(@Args('orderId', { nullable: false }) orderId: string) {
     return await this.orderService.findOne({ orderId });
   }
