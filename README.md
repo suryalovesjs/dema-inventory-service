@@ -21,16 +21,21 @@ $ npm run db:migrate
 ## Running the app
 
 ```bash
-# development
+# Choose
 $ npm run start
 
-# watch mode
+# development
 $ npm run start:dev
+
+# debug mode
+$ npm run start:debug
 
 # production mode
 $ npm run build
 $ npm run start:prod
 ```
+
+`Open http://localhost:3000/graphql in your browser`
 
 ## Test
 
